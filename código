@@ -1,0 +1,134 @@
+# JogoDaVelha
+Trabalho para matéria de alg e programação II 
+
+import java.util.Scanner;
+
+public class JogoDaVelha {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+         Object[][] jogadores = {
+                {"Jogador 1", 0},
+                {"Jogador 2", 0}
+        };
+
+        boolean continuarJogando = true;
+
+        System.out.println("Bem vindo ao Jogo da Velha");
+        System.out.print("Digite o nome do Jogador 1 (X): ");
+        jogadores[0][0] = scanner.nextLine();
+        System.out.print("Digite o nome do Jogador 2 (O): ");
+        jogadores[1][0] = scanner.nextLine();
+
+        while (continuarJogando) {
+
+            String[][] tabuleiro = {
+                    {" ", " ", " "},
+                    {" ", " ", " "},
+                    {" ", " ", " "}
+            };
+
+            int jogadorAtual = 0;
+            int totalJogadas = 0;
+            boolean temVencedor = false;
+
+            while (totalJogadas < 9 && !temVencedor) {
+                exibirTabuleiro(tabuleiro);
+
+                String simbolo = (jogadorAtual == 0) ? "X" : "O";
+                String nomeAtual = (String) jogadores[jogadorAtual][0];
+
+                System.out.println("Vez de " + nomeAtual + " (" + simbolo + ")");
+
+                int linha, coluna;
+
+                while (true) {
+                    System.out.print("Escolha a linha (0, 1 ou 2): ");
+                    linha = scanner.nextInt();
+                    System.out.print("Escolha a coluna (0, 1 ou 2): ");
+                    coluna = scanner.nextInt();
+
+                    if (linha >= 0 && linha <= 2 && coluna >= 0 && coluna <= 2) {
+                        if (tabuleiro[linha][coluna].equals(" ")) {
+                            break;
+                        } else {
+                            System.out.println("Ops! Essa posição já está ocupada. Tente novamente.");
+                        }
+                    } else {
+                        System.out.println("Posição inválida! Use valores entre 0 e 2.");
+                    }
+                }
+
+
+                tabuleiro[linha][coluna] = simbolo;
+                totalJogadas++;
+
+
+                temVencedor = verificarVitoria(tabuleiro, simbolo);
+
+                if (temVencedor) {
+                    exibirTabuleiro(tabuleiro);
+                    System.out.println("Fim de jogo! " + nomeAtual + " venceu esta partida!");
+
+
+                    int pontosAtuais = (int) jogadores[jogadorAtual][1];
+                    jogadores[jogadorAtual][1] = pontosAtuais + 1;
+
+                } else if (totalJogadas == 9) {
+                    exibirTabuleiro(tabuleiro);
+                    System.out.println("Fim de jogo! O tabuleiro está cheio. Empate!");
+                } else {
+
+                    jogadorAtual = 1 - jogadorAtual;
+                }
+            }
+
+
+            System.out.println("\n Placar Atual: ");
+            System.out.println(jogadores[0][0] + ": " + jogadores[0][1] + " ponto(s)");
+            System.out.println(jogadores[1][0] + ": " + jogadores[1][1] + " ponto(s)");
+            System.out.println("--------------------");
+
+            System.out.print("\nDeseja jogar outra partida? (s/n): ");
+            char resposta = scanner.next().toLowerCase().charAt(0);
+            if (resposta != 's') {
+                continuarJogando = false;
+            }
+        }
+
+        System.out.println("\nObrigado por jogar! Placar final encerrado.");
+        scanner.close();
+    }
+
+        public static void exibirTabuleiro(String[][] t) {
+        System.out.println("\n    0   1   2");
+        for (int i = 0; i < 3; i++) {
+            System.out.print(i + " ");
+            for (int j = 0; j < 3; j++) {
+                System.out.print(" " + t[i][j] + " ");
+                if (j < 2) System.out.print("|");
+            }
+            System.out.println();
+            if (i < 2) System.out.println("   -----------");
+        }
+        System.out.println();
+    }
+
+      public static boolean verificarVitoria(String[][] t, String s) {
+
+        for (int i = 0; i < 3; i++) {
+            if ((t[i][0].equals(s) && t[i][1].equals(s) && t[i][2].equals(s)) ||
+                    (t[0][i].equals(s) && t[1][i].equals(s) && t[2][i].equals(s))) {
+                return true;
+            }
+        }
+
+        if ((t[0][0].equals(s) && t[1][1].equals(s) && t[2][2].equals(s)) ||
+                (t[0][2].equals(s) && t[1][1].equals(s) && t[2][0].equals(s))) {
+            return true;
+        }
+
+        return false;
+    }
+}
